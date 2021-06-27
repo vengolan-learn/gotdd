@@ -5,6 +5,8 @@ import (
 	"fmt"
 )
 
+//Repeats char iter number of times.
+//Uses Bytes.Buffer. This is more eifficient than Repeat
 func RepeatBuf(char string, iter int) string {
 	var ret bytes.Buffer
 	for i := 0; i < iter; i++ {
@@ -14,6 +16,8 @@ func RepeatBuf(char string, iter int) string {
 
 }
 
+//Repeats "char",  "iter" times
+//This uses string concatenation for each iteration
 func Repeat(char string, iter int) string {
 	var ret string
 	for i := 0; i < iter; i++ {

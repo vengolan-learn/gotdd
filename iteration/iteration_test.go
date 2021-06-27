@@ -1,6 +1,7 @@
 package iteration
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -23,4 +24,17 @@ func BenchmarkRepeatBuf(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		RepeatBuf("alonger stringstill longer to check the efficiency of buf", 10000)
 	}
+}
+
+func ExampleRepeat() {
+	repeated := Repeat("a", 5)
+	fmt.Println(repeated)
+	//Output: aaaaa
+
+}
+
+func ExampleRepeatBuf() {
+	repeated := RepeatBuf("a", 10)
+	fmt.Println(repeated)
+	//Output: aaaaaaaaaa
 }
