@@ -1,13 +1,18 @@
 package main
 
-type Wallet struct{}
+import "fmt"
 
-func (w Wallet) Deposit(amount int) {
-
+type Wallet struct {
+	balance int
 }
 
-func (w Wallet) Balance() int {
-	return 0
+func (w *Wallet) Deposit(amount int) {
+	fmt.Printf("adress of balance in Deposit is %v \n", &w.balance)
+	(*w).balance += amount
+}
+
+func (w *Wallet) Balance() int {
+	return (*w).balance
 
 }
 
