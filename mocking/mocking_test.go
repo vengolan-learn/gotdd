@@ -4,10 +4,20 @@ import (
 	"bytes"
 	"reflect"
 	"testing"
+	"time"
 )
 
 const write = "write"
 const sleep = "sleep"
+
+type SpyTime struct {
+	durationSlept time.Duration
+}
+
+func (s *SpyTime) Sleep(duration time.Duration) {
+	s.durationSlept = duration
+
+}
 
 type CountdownOperationsSpy struct {
 	Calls []string
@@ -20,6 +30,18 @@ func (s *CountdownOperationsSpy) Sleep() {
 func (s *CountdownOperationsSpy) Write(p []byte) (n int, err error) {
 	s.Calls = append(s.Calls, write)
 	return
+}
+
+func TestConfigurableSpeaker(t *testing.T) {
+	sleepTime := 5 * time.Second
+
+	spyTime := &SpyTime{}
+	sleeper := ConfigurableSleeper{sleepTime, spyTime.Sleep}
+	sleeper.Sleep()
+
+	if spyTime.durationSlept != sleepTime {
+		t.Errorf("should have slept for %v but slept for %v", sleepTime, spyTime.durationSlept)
+	}
 }
 
 func TestCountdown(t *testing.T) {
