@@ -7,33 +7,28 @@ import (
 
 func TestWalk(t *testing.T) {
 
+	type Profile struct {
+		Age  int
+		City string
+	}
+
+	type Person struct {
+		Name    string
+		Profile Profile
+	}
+
 	cases := []struct {
 		Name          string
-		Input         interface{}
+		Input         Person
 		ExpectedCalls []string
 	}{
 		{
-			"Struct with one string field",
-			struct {
-				Name string
-			}{"Rama"},
-			[]string{"Rama"},
-		},
-		{
-			"Struct with two string fields",
-			struct {
-				Name string
-				City string
-			}{"Rama", "Sakethnagar"},
+			"Nested fields",
+			Person{
+				"Rama",
+				Profile{22, "Sakethnagar"},
+			},
 			[]string{"Rama", "Sakethnagar"},
-		},
-		{
-			"Struct with non string field",
-			struct {
-				Name string
-				Age  int
-			}{"Rama", 22},
-			[]string{"Rama"},
 		},
 	}
 
