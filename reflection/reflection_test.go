@@ -12,23 +12,25 @@ func TestWalk(t *testing.T) {
 		City string
 	}
 
-	type Person struct {
-		Name    string
-		Profile Profile
-	}
-
+	/* 	type Person struct {
+	   		Name    string
+	   		Profile Profile
+	   	}
+	*/
 	cases := []struct {
 		Name          string
-		Input         *Person
+		Input         []Profile
 		ExpectedCalls []string
 	}{
 		{
 			"Nested fields",
-			&Person{
-				"Rama",
-				Profile{22, "Sakethnagar"},
+			[]Profile{
+				{22, "Ayudh"},
+				{25, "Chitrakoot"},
+				{28, "Dandaka"},
+				{37, "Lanka"},
 			},
-			[]string{"Rama", "Sakethnagar"},
+			[]string{"Ayudh", "Chitrakoot", "Dandaka", "Lanka"},
 		},
 	}
 
