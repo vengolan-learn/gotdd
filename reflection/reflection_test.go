@@ -12,25 +12,76 @@ func TestWalk(t *testing.T) {
 		City string
 	}
 
-	/* 	type Person struct {
-	   		Name    string
-	   		Profile Profile
-	   	}
-	*/
+	type Person struct {
+		Name    string
+		Profile Profile
+	}
+
 	cases := []struct {
 		Name          string
-		Input         [4]Profile
+		Input         interface{}
 		ExpectedCalls []string
 	}{
 		{
-			"Arrays",
-			[4]Profile{
-				{22, "Ayudh"},
-				{25, "Chitrakoot"},
-				{28, "Dandaka"},
-				{37, "Lanka"},
+			"Struct with one string field",
+			struct{ Name string }{"Chris"},
+			[]string{"Chris"},
+		},
+		{
+			"Struct with two string fields",
+			struct {
+				Name string
+				City string
+			}{"Chris", "London"},
+			[]string{"Chris", "London"},
+		},
+		{
+			"Struct with non string field",
+			struct {
+				Name string
+				Age  int
+			}{"Chris", 33},
+			[]string{"Chris"},
+		},
+		{
+			"Nested fields",
+			Person{
+				"Chris",
+				Profile{33, "London"},
 			},
-			[]string{"Ayudh", "Chitrakoot", "Dandaka", "Lanka"},
+			[]string{"Chris", "London"},
+		},
+		{
+			"Pointers to things",
+			&Person{
+				"Chris",
+				Profile{33, "London"},
+			},
+			[]string{"Chris", "London"},
+		},
+		{
+			"Slices",
+			[]Profile{
+				{33, "London"},
+				{34, "Reykjavík"},
+			},
+			[]string{"London", "Reykjavík"},
+		},
+		{
+			"Arrays",
+			[2]Profile{
+				{33, "London"},
+				{34, "Reykjavík"},
+			},
+			[]string{"London", "Reykjavík"},
+		},
+		{
+			"Maps",
+			map[string]string{
+				"Foo": "FooVal",
+				"Bar": "BarVal",
+			},
+			[]string{"FooVal", "BarVal"},
 		},
 	}
 
