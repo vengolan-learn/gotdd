@@ -90,6 +90,7 @@ func TestWalk(t *testing.T) {
 		})
 	}
 
+	//Separate function to check map output since the order is not guaranteed...
 	t.Run("with maps", func(t *testing.T) {
 
 		aMap := map[string]string{
