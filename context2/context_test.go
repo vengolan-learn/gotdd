@@ -8,26 +8,11 @@ import (
 	"time"
 )
 
-type SpyStore struct {
-	response  string
-	cancelled bool
-}
-
-func (s *SpyStore) Fetch() string {
-	time.Sleep(100 * time.Millisecond)
-	return s.response
-}
-
-func (s *SpyStore) Cancel() {
-	s.cancelled = true
-
-}
-
 func TestServer(t *testing.T) {
 	data := "Hello World!"
 
 	t.Run("returns data from store", func(t *testing.T) {
-		store := &SpyStore{response: data}
+		store := &SpyStore{response: data, t: t}
 		svr := Server(store)
 
 		request := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -40,14 +25,11 @@ func TestServer(t *testing.T) {
 			t.Errorf(`want %s, but got %s`, data, got)
 		}
 
-		if store.cancelled {
-			t.Error("it should not have cancelled the store")
-		}
-
+		store.assertWasNotCancelled()
 	})
 
 	t.Run("tells store to cancel work if request is cancelled", func(t *testing.T) {
-		store := &SpyStore{response: data}
+		store := &SpyStore{response: data, t: t}
 		srv := Server(store)
 
 		request := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -58,9 +40,7 @@ func TestServer(t *testing.T) {
 		response := httptest.NewRecorder()
 		srv.ServeHTTP(response, request)
 
-		if !store.cancelled {
-			t.Error("store was not told to cancel")
-		}
+		store.assertWasCancelled()
 	})
 
 }
