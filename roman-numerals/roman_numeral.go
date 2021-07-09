@@ -2,12 +2,12 @@ package numeral
 
 import "strings"
 
-type RomanNumeral struct {
+type RomanNumerals []struct {
 	Value  int
 	Symbol string
 }
 
-var allRomanNumerals = []RomanNumeral{
+var allRomanNumerals = RomanNumerals{
 	{1000, "M"},
 	{900, "CM"},
 	{500, "D"},
@@ -21,6 +21,47 @@ var allRomanNumerals = []RomanNumeral{
 	{5, "V"},
 	{4, "IV"},
 	{1, "I"},
+}
+
+func (r RomanNumerals) ValueOf(symbols ...byte) int {
+	symbol := string(symbols)
+	for _, s := range r {
+		if s.Symbol == symbol {
+			return s.Value
+		}
+	}
+	return 0
+}
+
+func (r RomanNumerals) Exists(symbols ...byte) bool {
+	symbol := string(symbols)
+	for _, s := range r {
+		if s.Symbol == symbol {
+			return true
+		}
+	}
+	return false
+}
+
+type windowedroman string
+
+func (w windowedroman) symbols() (symbols [][]byte) {
+	for i := 0; i < len(w); i++ {
+		symbol := w[i]
+		notAtEnd := i+1 < len(w)
+
+		if notAtEnd && isSubtractive(symbol) && allRomanNumerals.Exists(symbol, w[i+1]) {
+			symbols = append(symbols, []byte{symbol, w[i+1]})
+			i++
+		} else {
+			symbols = append(symbols, []byte{symbol})
+		}
+	}
+	return
+}
+
+func isSubtractive(symbol uint8) bool {
+	return symbol == 'I' || symbol == 'X' || symbol == 'C'
 }
 
 func ConvertToRoman(arabic int) string {
@@ -37,17 +78,9 @@ func ConvertToRoman(arabic int) string {
 	return result.String()
 }
 
-func ConvertToArabic(roman string) int {
-
-	switch roman {
-	case "I":
-		return 1
-	case "II":
-		return 2
-	case "III":
-		return 3
-
+func ConvertToArabic(roman string) (total int) {
+	for _, symbols := range windowedroman(roman).symbols() {
+		total += allRomanNumerals.ValueOf(symbols...)
 	}
-
-	return 0
+	return
 }
