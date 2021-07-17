@@ -25,20 +25,47 @@ func TestFailure(t *testing.T) {
 }
 
 func TestNewBlogPosts(t *testing.T) {
+
+	const (
+		firstBody = `Title: Post 1 
+Description: Description 1
+Tags: tdd, go
+---
+Hello 
+World!`
+		secondBody = `Title: Post 2
+Description: Description 2
+Tags: rust, borrow-checker
+---
+B
+L
+M`
+	)
+
 	fs := fstest.MapFS{
-		"hello world.md":  {Data: []byte("Title: Post 1")},
-		"hello-world2.md": {Data: []byte("Title: Post 2")},
+		"hello world.md":  {Data: []byte(firstBody)},
+		"hello-world2.md": {Data: []byte(secondBody)},
 	}
 
 	posts, err := blogposts.NewPostsFromFS(fs)
 	got := posts[0]
-	want := blogposts.Post{Title: "Post 1"}
+	want := blogposts.Post{Title: "Post 1",
+		Description: "Description 1",
+		Tags:        []string{"tdd", "go"},
+		Body: `Hello
+World!`,
+	}
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("wanted %v , but got %v posts", want, got)
+	assertPost(t, got, want)
+}
+
+func assertPost(t *testing.T, got blogposts.Post, want blogposts.Post) {
+	t.Helper()
+	if !reflect.DeepEqual(want, got) {
+		t.Errorf("want %v-, but got %v-", want, got)
 	}
 }
